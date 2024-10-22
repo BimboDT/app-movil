@@ -1,33 +1,66 @@
-import { Text, View, StyleSheet } from 'react-native';
-
-import Button from '@/components/Button';
+import React from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Image,
+} from "react-native";
 
 export default function Index() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Home screen</Text>
-      <View style={styles.footerContainer}>
-        <Button label="Confirmar" />
+    // Detectar el toque fuera del TextInput para cerrar el teclado
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <Image
+          source={require("@/assets/images/logo.png")}
+          style={styles.logo}
+        />
+        <Text style={styles.text}>Bimbo Scan</Text>
+        <Image
+          source={require("@/assets/images/osito.png")}
+          style={styles.osito}
+        />
+        <View style={styles.footerContainer}></View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
   },
   text: {
     fontSize: 20,
-    color: '#000000',
-    margin: 100
+    color: "#000000",
+    marginBottom: 100,
   },
   footerContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end'
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+  input: {
+    fontSize: 20,
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 2,
+    borderRadius: 10,
+    width: 300,
+    textAlign: "center",
+    color: "black",
+  },
+  osito: {
+    marginBottom: 100,
+  },
+  logo: {
+    marginTop: 50,
+    height: 100,
+    width: 100,
   },
 });
