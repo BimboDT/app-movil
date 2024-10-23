@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: "center"
   },
   message: {
     textAlign: 'center',
@@ -109,6 +110,5 @@ const styles = StyleSheet.create({
   },
   permission: {
     alignItems: "center",
-    width: 400
   }
 });
