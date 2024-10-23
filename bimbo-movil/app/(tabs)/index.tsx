@@ -33,12 +33,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    paddingBottom: 20
   },
   text: {
     fontSize: 20,
     color: "#000000",
-    marginBottom: 100,
+    marginBottom: 20,
   },
   footerContainer: {
     flex: 1,
@@ -56,10 +57,10 @@ const styles = StyleSheet.create({
     color: "black",
   },
   osito: {
-    marginBottom: 100,
+    marginBottom: 20,
   },
   logo: {
-    marginTop: 50,
+    marginTop: 20,
     height: 100,
     width: 100,
   },

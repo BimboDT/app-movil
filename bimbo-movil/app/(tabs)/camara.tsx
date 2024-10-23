@@ -18,8 +18,10 @@ export default function CamaraScreen() {
     // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <Text style={styles.message}>We need your permission to use the camera</Text>
+        <View style={styles.permission}>
+          <Button onPress={requestPermission} title="grant permission" />
+        </View>
       </View>
     );
   }
@@ -77,7 +79,8 @@ const styles = StyleSheet.create({
   },
   message: {
     textAlign: 'center',
-    paddingBottom: 10,
+    paddingBottom: 20,
+    fontWeight: "bold",
   },
   camera: {
     flex: 1,
@@ -104,4 +107,8 @@ const styles = StyleSheet.create({
     height: 300,
     marginTop: 20,
   },
+  permission: {
+    alignItems: "center",
+    width: 400
+  }
 });
