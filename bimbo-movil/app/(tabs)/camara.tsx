@@ -1,6 +1,6 @@
 import { CameraView, useCameraPermissions, CameraPictureOptions, CameraCapturedPicture } from 'expo-camera';
 import { useState, useRef } from 'react';
-import { Text, View, StyleSheet, Button, TouchableOpacity, Alert } from 'react-native';
+import { Text, View, StyleSheet, Button, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import Popup from '@/components/PopUp';
 import Constants from 'expo-constants';
@@ -12,19 +12,18 @@ export default function CamaraScreen() {
   const cameraRef = useRef<CameraView | null>(null);;
   const [photo, setPhoto] = useState<CameraCapturedPicture | null>(null);
   const [BoxCount, setBoxCount] = useState(0);
-
   const [isVisible, setIsVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const togglePopup = () => {
     setIsVisible(!isVisible);
   };
 
   if (!permission) {
-    // Camera permissions are still loading.
     return <View />;
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
         <Text style={styles.message}>We need your permission to use the camera</Text>
@@ -38,14 +37,15 @@ export default function CamaraScreen() {
   async function takePicture() {
     if (cameraRef.current) {
       const photoOptions : CameraPictureOptions = {
-        skipProcessing: false, // Cambiar a true si no necesitas procesar la imagen
-        base64: true, // Esto incluye la imagen en base64
-        exif: true, // Esto incluye los datos EXIF
+        skipProcessing: false,
+        base64: true,
+        exif: true,
       };
 
       const photo = await cameraRef.current.takePictureAsync(photoOptions);
       if (photo) {
         setPhoto(photo);
+        setLoading(true);
         // Alert.alert('Photo taken!', `URI: ${photo.uri}`);
         await uploadPicture(photo);
       } else {
@@ -74,6 +74,8 @@ export default function CamaraScreen() {
       togglePopup();
     } catch (err) {
       Alert.alert('Upload Failed', `Error: ${err}`);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -87,6 +89,14 @@ export default function CamaraScreen() {
           </TouchableOpacity>
         </View>
       </CameraView>
+
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0000ff" />
+          <Text style={styles.loadingText}>Uploading...</Text>
+        </View>
+      )}
+
       <Popup
         isVisible={isVisible}
         onClose={togglePopup}
@@ -131,5 +141,19 @@ const styles = StyleSheet.create({
   },
   permission: {
     alignItems: "center",
-  }
+  },
+  loadingContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fondo semi-transparente
+  },
+  loadingText: {
+    marginTop: 10,
+    color: 'white',
+  },
 });
