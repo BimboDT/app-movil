@@ -1,6 +1,6 @@
-import { CameraView, CameraType, useCameraPermissions, CameraPictureOptions, CameraCapturedPicture } from 'expo-camera';
+import { CameraView, useCameraPermissions, CameraPictureOptions, CameraCapturedPicture } from 'expo-camera';
 import { useState, useRef } from 'react';
-import { Text, View, StyleSheet, Button, TouchableOpacity, Alert, Image } from 'react-native';
+import { Text, View, StyleSheet, Button, TouchableOpacity, Alert } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import Popup from '@/components/PopUp';
 import Constants from 'expo-constants';
@@ -8,10 +8,10 @@ import Constants from 'expo-constants';
 const SERVER = Constants.expoConfig?.extra?.SERVER ?? '';
 
 export default function CamaraScreen() {
-  const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView | null>(null);;
   const [photo, setPhoto] = useState<CameraCapturedPicture | null>(null);
+  const [BoxCount, setBoxCount] = useState(0);
 
   const [isVisible, setIsVisible] = useState(false);
   const togglePopup = () => {
@@ -35,10 +35,6 @@ export default function CamaraScreen() {
     );
   }
 
-  function toggleCameraFacing() {
-    setFacing(current => (current === 'back' ? 'front' : 'back'));
-  }
-
   async function takePicture() {
     if (cameraRef.current) {
       const photoOptions : CameraPictureOptions = {
@@ -50,33 +46,32 @@ export default function CamaraScreen() {
       const photo = await cameraRef.current.takePictureAsync(photoOptions);
       if (photo) {
         setPhoto(photo);
-        togglePopup();
         // Alert.alert('Photo taken!', `URI: ${photo.uri}`);
-        await uploadPicture();
+        await uploadPicture(photo);
       } else {
         Alert.alert('Error', 'Failed to take picture');
       }
     }
   }
 
-  async function uploadPicture() {
-    if (!photo) return "Hola Foto";
-
-    const jsonData = {
-      image: photo.base64
-    }
+  async function uploadPicture(photo: CameraCapturedPicture | null) {
+    if (!photo) return "No hay una foto para subir";
 
     try {
-      const response = await fetch(`http://${SERVER}/upload`, {
+      const response = await fetch(`http://${SERVER}/predict`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(jsonData),
+        body: JSON.stringify({
+          image: photo.base64
+        }),
       });
 
       const responseData = await response.json();
-      Alert.alert('Upload Success', `Response: ${responseData.message}`);
+      setBoxCount(responseData.detections);
+      // Alert.alert('Upload Success', `Response: ${responseData.detections}`);
+      togglePopup();
     } catch (err) {
       Alert.alert('Upload Failed', `Error: ${err}`);
     }
@@ -84,7 +79,7 @@ export default function CamaraScreen() {
 
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
+      <CameraView style={styles.camera} ref={cameraRef}>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={takePicture}>
             <Entypo name="camera" size={40} color="white" />
@@ -96,6 +91,7 @@ export default function CamaraScreen() {
         isVisible={isVisible}
         onClose={togglePopup}
         imageUrl={photo ? photo.uri : ''}
+        boxCount={BoxCount}
       />
     </View>
   );

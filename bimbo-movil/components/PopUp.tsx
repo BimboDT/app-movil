@@ -6,14 +6,17 @@ interface PopupProps {
   isVisible: boolean;
   onClose: () => void;
   imageUrl: string;
+  boxCount: number;
 }
 
-const Popup: React.FC<PopupProps> = ({ isVisible, onClose, imageUrl }) => {
+const Popup: React.FC<PopupProps> = ({ isVisible, onClose, imageUrl, boxCount }) => {
   return (
     <Modal isVisible={isVisible}>
       <View style={styles.container}>
         <Image source={{ uri: imageUrl }} style={styles.image} />
-        <Text style={styles.Text}>Se detecto 1 caja</Text>
+        <Text style={styles.Text}>
+          {boxCount !== null ? `Se detectaron ${boxCount} caja${boxCount > 1 || boxCount == 0  ? 's' : ''}` : 'Detectando...'}
+        </Text>
         <TouchableOpacity onPress={onClose} style={styles.button}>
           <Text style={styles.buttonText}>Cerrar</Text>
         </TouchableOpacity>
