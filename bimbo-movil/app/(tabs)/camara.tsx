@@ -14,6 +14,7 @@ export default function CamaraScreen() {
   const [BoxCount, setBoxCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [cameraTorch, setCameraTorch] = useState<boolean>(false);
 
   const togglePopup = () => {
     setIsVisible(!isVisible);
@@ -81,8 +82,12 @@ export default function CamaraScreen() {
 
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera} ref={cameraRef}>
+      <CameraView style={styles.camera} ref={cameraRef} enableTorch={cameraTorch}>
         <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={() => setCameraTorch(!cameraTorch)}>
+            <Entypo name="flash" size={40} color="white" />
+            <Text style={styles.text}>Flash</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={takePicture}>
             <Entypo name="camera" size={40} color="white" />
             <Text style={styles.text}>Take Picture</Text>
