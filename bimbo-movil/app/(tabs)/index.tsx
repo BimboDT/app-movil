@@ -1,30 +1,17 @@
 import React from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  Keyboard,
-  Image,
-} from "react-native";
+import { Text, View, StyleSheet, Image } from "react-native";
 
 export default function Index() {
   return (
-    // Detectar el toque fuera del TextInput para cerrar el teclado
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.container}>
-        <Image
-          source={require("@/assets/images/logo.png")}
-          style={styles.logo}
-        />
-        <Text style={styles.text}>Bimbo Scan</Text>
-        <Image
-          source={require("@/assets/images/osito.png")}
-          style={styles.osito}
-        />
-        <View style={styles.footerContainer}></View>
-      </View>
-    </TouchableWithoutFeedback>
+    <View style={styles.container}>
+      <Image source={require("@/assets/images/logo.png")} style={styles.logo} />
+      <Text style={styles.text}>Bimbo Scan</Text>
+      <Image
+        source={require("@/assets/images/osito.png")}
+        style={styles.osito}
+      />
+      <View style={styles.footerContainer}></View>
+    </View>
   );
 }
 
@@ -34,7 +21,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingBottom: 20
+    paddingBottom: 20,
   },
   text: {
     fontSize: 20,

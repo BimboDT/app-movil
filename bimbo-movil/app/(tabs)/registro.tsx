@@ -6,20 +6,19 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import Button from "@/components/Button";
+import Access from "@/components/Access";
 
-export default function ConteoScreen() {
+export default function RegistroScreen() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
-        <Text style={styles.text}>Conteo screen</Text>
+        <Text style={styles.text}>Bienvenido</Text>
         <TextInput
           style={styles.input}
-          placeholder="Ingrese Conteo Manual"
-          placeholderTextColor="gray"
-          keyboardType="numeric"
+          placeholder="Ingrese su número de empleado"
+          placeholderTextColor="darkgray"
         />
-        <Button label="Confirmar" />
+        <Access label="Acceder" />
       </View>
     </TouchableWithoutFeedback>
   );
