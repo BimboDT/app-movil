@@ -1,41 +1,111 @@
-import { StyleSheet, View, Pressable, Text } from 'react-native';
+import {
+  TextInput,
+  Text,
+  View,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Dimensions,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { useState } from "react";
 
-type Props = {
+const { width, height } = Dimensions.get("window");
+
+interface AccessProps {
   label: string;
-};
+}
 
-export default function Button({ label }: Props) {
+export default function Access({ label }: AccessProps) {
+  const router = useRouter();
+  const [employeeNumber, setEmployeeNumber] = useState("");
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleAccess = () => {
+    if (employeeNumber) {
+      // aquí agregar lógica número de empleado!!!!
+      router.replace("/(tabs)");
+    } else {
+      alert("Por favor, ingresa un número de empleado válido.");
+    }
+  };
+
   return (
-    <View style={styles.buttonContainer}>
-      <Pressable style={styles.button} onPress={() => alert('Conteo registrado exitosamente.')}>
-        <Text style={styles.buttonLabel}>{label}</Text>
-      </Pressable>
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <TextInput
+          style={styles.input}
+          placeholder="Número de empleado"
+          value={employeeNumber}
+          placeholderTextColor="gray"
+          onChangeText={setEmployeeNumber}
+        />
+        <TouchableWithoutFeedback onPress={handleAccess}>
+          <View
+            style={[styles.button, isHovered && styles.buttonHovered]}
+            onTouchStart={() => setIsHovered(true)}
+            onTouchEnd={() => setIsHovered(false)}
+            onTouchCancel={() => setIsHovered(false)}
+          >
+            <Text style={styles.buttonText}>{label}</Text>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  buttonContainer: {
-    width: 320,
-    height: 65,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 3,
-    margin: 70,
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  text: {
+    fontSize: width * 0.05,
+    color: "#000000",
+    margin: width * 0.1,
+    fontWeight: "bold",
+    fontFamily: "CenturyGothic",
+  },
+  input: {
+    fontSize: width * 0.05,
+    height: height * 0.05,
+    borderColor: "gray",
+    borderWidth: 2,
+    borderRadius: 10,
+    width: width * 0.8,
+    textAlign: "center",
+    color: "black",
+    fontFamily: "CenturyGothic",
+  },
+  title: {
+    fontSize: width * 0.06,
+    margin: height * 0.05,
   },
   button: {
-    borderRadius: 20,
-    width: '60%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#00427A',
+    margin: height * 0.03,
+    padding: height * 0.02,
+    backgroundColor: "#263576",
+    borderRadius: 5,
+    fontFamily: "CenturyGothic",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.5,
+    elevation: 5,
   },
-  buttonIcon: {
-    paddingRight: 8,
+  buttonHovered: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.5,
+    elevation: 8,
+    backgroundColor: "#b2171f",
   },
-  buttonLabel: {
-    color: '#FFFFFF',
-    fontSize: 20,
+  buttonText: {
+    color: "#fff",
+    fontSize: width * 0.05,
+    fontFamily: "CenturyGothic",
   },
 });

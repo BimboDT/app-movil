@@ -1,6 +1,15 @@
-import React from 'react';
-import { View, Image, TouchableOpacity, StyleSheet, Text } from 'react-native';
-import Modal from 'react-native-modal';
+import React from "react";
+import {
+  View,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  Dimensions,
+} from "react-native";
+import Modal from "react-native-modal";
+
+const { width, height } = Dimensions.get("window");
 
 interface PopupProps {
   isVisible: boolean;
@@ -9,13 +18,22 @@ interface PopupProps {
   boxCount: number;
 }
 
-const Popup: React.FC<PopupProps> = ({ isVisible, onClose, imageUrl, boxCount }) => {
+const Popup: React.FC<PopupProps> = ({
+  isVisible,
+  onClose,
+  imageUrl,
+  boxCount,
+}) => {
   return (
     <Modal isVisible={isVisible}>
       <View style={styles.container}>
         <Image source={{ uri: imageUrl }} style={styles.image} />
         <Text style={styles.Text}>
-          {boxCount !== null ? `Se detectaron ${boxCount} caja${boxCount > 1 || boxCount == 0  ? 's' : ''}` : 'Detectando...'}
+          {boxCount !== null
+            ? `Se detectaron ${boxCount} caja${
+                boxCount > 1 || boxCount == 0 ? "s" : ""
+              }`
+            : "Detectando..."}
         </Text>
         <TouchableOpacity onPress={onClose} style={styles.button}>
           <Text style={styles.buttonText}>Cerrar</Text>
@@ -27,32 +45,35 @@ const Popup: React.FC<PopupProps> = ({ isVisible, onClose, imageUrl, boxCount })
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 10,
-    padding: 20,
+    padding: width * 0.05,
   },
   image: {
-    width: '100%',
-    height: '80%',
+    width: width * 0.9,
+    height: height * 0.4,
     borderRadius: 10,
   },
   button: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#007BFF',
+    marginTop: height * 0.02,
+    padding: height * 0.02,
+    backgroundColor: "#007BFF",
     borderRadius: 5,
+    fontFamily: "CenturyGothic",
   },
   buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
+    color: "#FFFFFF",
+    fontSize: width * 0.04,
+    fontFamily: "CenturyGothic",
   },
   Text: {
-    color: '#FFFFFF',
-    fontSize: 25,
-    marginTop: 20,
-    fontWeight: 'bold',
+    color: "#FFFFFF",
+    fontSize: width * 0.06,
+    marginTop: height * 0.03,
+    fontWeight: "bold",
+    fontFamily: "CenturyGothic",
   },
 });
 

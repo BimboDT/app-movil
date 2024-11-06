@@ -4,9 +4,11 @@ import {
   View,
   StyleSheet,
   TouchableWithoutFeedback,
-  Keyboard,
+  Keyboard, Dimensions
 } from "react-native";
 import Button from "@/components/Button";
+
+const { width, height } = Dimensions.get('window');
 
 export default function ConteoScreen() {
   return (
@@ -31,21 +33,24 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     justifyContent: "center",
     alignItems: "center",
+    fontFamily: "CenturyGothic",
   },
   text: {
-    fontSize: 20,
+    fontSize: width * 0.05,
     color: "#000000",
-    margin: 100,
+    margin: width * 0.1,
     fontWeight: "bold",
+    fontFamily: "CenturyGothic",
   },
   input: {
-    fontSize: 20,
-    height: 40,
+    fontSize: width * 0.05,
+    height: height * 0.05,
     borderColor: "gray",
     borderWidth: 2,
     borderRadius: 10,
-    width: 300,
+    width: width * 0.8,
     textAlign: "center",
     color: "black",
+    fontFamily: "CenturyGothic",
   },
 });
