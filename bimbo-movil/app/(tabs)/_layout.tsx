@@ -4,7 +4,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from 'react';
 
 export default function TabLayout() {
-  const [isRegistered, setIsRegistered] = useState(false); // Estado para manejar el registro
+  const [isRegistered, setIsRegistered] = useState(false);
 
   return (
     <Tabs
@@ -20,14 +20,13 @@ export default function TabLayout() {
         },
       }}
     >
-      {/* Condición para mostrar la pantalla de registro solo si no está registrado */}
       {!isRegistered && (
         <Tabs.Screen
           name="registro"
           options={{
             title: 'Registro',
-            headerTitleStyle: { display: 'none' }, // Ocultar el título de la barra de navegación
-            tabBarStyle: { display: 'none' }, // Ocultar la barra de navegación para registro
+            headerTitleStyle: { display: 'none' }, 
+            tabBarStyle: { display: 'none' },
           }}
         />
       )}
