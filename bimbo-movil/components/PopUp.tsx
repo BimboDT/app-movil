@@ -8,6 +8,7 @@ import {
   Dimensions,
 } from "react-native";
 import Modal from "react-native-modal";
+import { useRouter } from "expo-router";
 
 const { width, height } = Dimensions.get("window");
 
@@ -24,6 +25,13 @@ const Popup: React.FC<PopupProps> = ({
   imageUrl,
   boxCount,
 }) => {
+  const router = useRouter();
+  
+  const handleClose = () => {
+    onClose();
+    router.push('/');
+  };
+
   return (
     <Modal isVisible={isVisible}>
       <View style={styles.container}>
@@ -35,7 +43,7 @@ const Popup: React.FC<PopupProps> = ({
               }`
             : "Detectando..."}
         </Text>
-        <TouchableOpacity onPress={onClose} style={styles.button}>
+        <TouchableOpacity onPress={handleClose} style={styles.button}>
           <Text style={styles.buttonText}>Cerrar</Text>
         </TouchableOpacity>
       </View>
