@@ -13,7 +13,7 @@ export default function TabLayout() {
         headerStyle: {
           backgroundColor: '#263576',
         },
-        headerShadowVisible: false,
+        headerShadowVisible: true,
         headerTintColor: '#FFFFFF',
         tabBarStyle: {
           backgroundColor: '#FFFFFF',
@@ -38,7 +38,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'home-sharp' : 'home-outline'} color={color} size={25} />
           ),
-          tabBarStyle: { display: 'none' }
+          tabBarStyle: { display: 'flex'}
         }}
       />
       <Tabs.Screen
@@ -58,7 +58,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'camera' : 'camera-outline'} color={color} size={25} />
           ),
-          tabBarStyle: { display: 'none' }
+          tabBarStyle: { display: 'flex' }
         }}
         
       />
