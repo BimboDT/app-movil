@@ -1,7 +1,6 @@
-// tabs/_layout.tsx
-import { Tabs } from 'expo-router';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { useState } from 'react';
+import { Tabs } from "expo-router";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useState } from "react";
 
 export default function TabLayout() {
   const [isRegistered, setIsRegistered] = useState(false);
@@ -9,14 +8,14 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#00427A',
+        tabBarActiveTintColor: "#00427A",
         headerStyle: {
-          backgroundColor: '#263576',
+          backgroundColor: "#263576",
         },
         headerShadowVisible: true,
-        headerTintColor: '#FFFFFF',
+        headerTintColor: "#FFFFFF",
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: "#FFFFFF",
         },
       }}
     >
@@ -24,43 +23,58 @@ export default function TabLayout() {
         <Tabs.Screen
           name="registro"
           options={{
-            title: 'Registro',
-            headerTitleStyle: { display: 'none' }, 
-            tabBarStyle: { display: 'none' },
+            title: "Registro",
+            headerTitleStyle: { display: "none" },
+            tabBarButton: () => null,
+            tabBarStyle: { display: "none" },
           }}
         />
       )}
-      
+
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'home-sharp' : 'home-outline'} color={color} size={25} />
+            <Ionicons
+              name={focused ? "home-sharp" : "home-outline"}
+              color={color}
+              size={25}
+            />
           ),
-          tabBarStyle: { display: 'flex'}
-        }}
-      />
-      <Tabs.Screen
-        name="conteo"
-        options={{
-          title: 'Conteo',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'information-circle' : 'information-circle-outline'} color={color} size={25} />
-          ),
-          tabBarStyle: { display: 'none' }
+          tabBarStyle: { display: "flex" },
         }}
       />
       <Tabs.Screen
         name="camara"
         options={{
-          title: 'Camara',
+          title: "Picking",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'camera' : 'camera-outline'} color={color} size={25} />
+            <Ionicons
+              name={focused ? "camera" : "camera-outline"}
+              color={color}
+              size={25}
+            />
           ),
-          tabBarStyle: { display: 'flex' }
+          tabBarStyle: { display: "flex" },
         }}
-        
+      />
+      <Tabs.Screen
+        name="conteo"
+        options={{
+          title: "Conteo",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={
+                focused ? "information-circle" : "information-circle-outline"
+              }
+              color={color}
+              size={25}
+            />
+          ),
+          tabBarButton: () => null,
+          tabBarStyle: { display: "none" },
+        }}
       />
     </Tabs>
   );

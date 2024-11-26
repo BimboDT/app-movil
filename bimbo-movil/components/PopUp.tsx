@@ -32,6 +32,10 @@ const Popup: React.FC<PopupProps> = ({
     router.push('/');
   };
 
+  const handleManualCount = () => {
+    router.push('../app/(tabs)/conteo');
+  };
+
   return (
     <Modal isVisible={isVisible}>
       <View style={styles.container}>
@@ -43,6 +47,9 @@ const Popup: React.FC<PopupProps> = ({
               }`
             : "Detectando..."}
         </Text>
+        <TouchableOpacity onPress={handleManualCount} style={styles.button}>
+          <Text style={styles.buttonText}>Registrar Conteo Manual</Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={handleClose} style={styles.button}>
           <Text style={styles.buttonText}>Cerrar</Text>
         </TouchableOpacity>

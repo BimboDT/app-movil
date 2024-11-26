@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -8,7 +8,9 @@ import {
   Dimensions,
   FlatList,
 } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
 import { useRouter } from "expo-router";
+import { useUser } from "@/context/UserContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -19,8 +21,41 @@ type Item = {
 
 export default function Index() {
   const router = useRouter();
+  const { employeeName } = useUser();
 
-  const [checkedItems, setCheckedItems] = useState<boolean[]>([false, false, false, false, false]);
+  const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
+  const [selectedLetter, setSelectedLetter] = useState("A");
+  const [positions, setPositions] = useState<Item[]>([]);
+  const [open, setOpen] = useState(false); 
+  const [items, setItems] = useState(
+    Array.from("ABCDEFGHIJKLMNO").map((letter) => ({
+      label: letter,
+      value: letter,
+    }))
+  );
+
+  const fetchPositions = async (letter: string) => {
+    try {
+      const response = await fetch(`http://10.48.109.35:8080/conteo/posicionesNoContadas/${letter}`);
+      const data = await response.json();
+
+      const filteredPositions = data.positions
+        .filter((pos: string) => pos.startsWith(letter))
+        .map((pos: string, index: number) => ({
+          id: index + 1,
+          name: pos, 
+        }));
+
+      setPositions(filteredPositions);
+      setCheckedItems(new Array(filteredPositions.length).fill(false));
+    } catch (error) {
+      console.error("Error fetching positions:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPositions(selectedLetter);
+  }, []);
 
   const handleCameraAccess = (index: number) => {
     setCheckedItems((prev) => {
@@ -29,16 +64,8 @@ export default function Index() {
       return updatedItems;
     });
 
-    router.push("/camara");
+    router.push("../camara2");
   };
-
-  const items: Item[] = [
-    { id: 1, name: "C 03 12 02" },
-    { id: 2, name: "F 06 05 01" },
-    { id: 3, name: "F 06 07 01" },
-    { id: 4, name: "I 09 14 03" },
-    { id: 5, name: "K 11 02 02" },
-  ];
 
   const renderItem = ({ item, index }: { item: Item; index: number }) => (
     <TouchableOpacity
@@ -59,11 +86,26 @@ export default function Index() {
         style={styles.logo}
         resizeMode="contain"
       />
-      <Text style={styles.text}>Bienvenido, Juan Carlos...</Text>
-      <Text style={styles.subtext}>Posiciones a escanear hoy:</Text>
+      <Text style={styles.text}>Bienvenido, {employeeName}...</Text>
+      <Text style={styles.subtext}>Selecciona una letra para comenzar:</Text>
+
+      <DropDownPicker
+        open={open}
+        value={selectedLetter}
+        items={items}
+        setOpen={setOpen}
+        setValue={setSelectedLetter}
+        setItems={setItems}
+        onChangeValue={(value) => {
+          if (value) fetchPositions(value);
+        }}
+        style={styles.dropdown}
+        dropDownContainerStyle={styles.dropdownContainer}
+        textStyle={styles.dropdownText}
+      />
 
       <FlatList
-        data={items}
+        data={positions}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.listContainer}
@@ -107,7 +149,9 @@ const styles = StyleSheet.create({
     width: width * 0.25,
   },
   listContainer: {
+    marginTop: height * 0.03,
     width: "80%",
+    justifyContent: "space-between",
   },
   listItem: {
     padding: height * 0.02,
@@ -115,7 +159,7 @@ const styles = StyleSheet.create({
     marginVertical: height * 0.01,
     borderRadius: 5,
     textAlign: "center",
-    alignItems: "center",
+    justifyContent: "space-between",
   },
   itemText: {
     fontSize: width * 0.05,
@@ -125,5 +169,24 @@ const styles = StyleSheet.create({
   checked: {
     textDecorationLine: "line-through",
     color: "#888888",
+  },
+  dropdown: {
+    width: "80%",
+    backgroundColor: "#F0F0F0",
+    borderRadius: 5,
+    borderColor: "#CCCCCC",
+    alignSelf: "center",
+  },
+  dropdownContainer: {
+    width: "80%",
+    backgroundColor: "#FFFFFF",
+    borderColor: "#CCCCCC",
+    alignSelf: "center",
+  },
+  dropdownText: {
+    fontSize: width * 0.05,
+    color: "#000000",
+    fontFamily: "CenturyGothic",
+    textAlign: "center",
   },
 });

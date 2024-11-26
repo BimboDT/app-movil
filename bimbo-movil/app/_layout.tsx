@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { Text, View } from "react-native";
+import { UserProvider } from "../context/UserContext";
 
 export default function RootLayout(): JSX.Element {
   const router = useRouter();
@@ -38,9 +39,11 @@ export default function RootLayout(): JSX.Element {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="+not-found" />
-    </Stack>
+    <UserProvider>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" />
+      </Stack>
+    </UserProvider>
   );
 }

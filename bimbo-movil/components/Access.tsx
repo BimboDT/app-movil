@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useState } from "react";
+import { useUser } from "../context/UserContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -18,17 +19,30 @@ interface AccessProps {
 
 export default function Access({ label }: AccessProps) {
   const router = useRouter();
+  const { setEmployeeName } = useUser();
   const [employeeNumber, setEmployeeNumber] = useState("");
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleAccess = () => {
-    if (employeeNumber) {
-      // aquí agregar lógica número de empleado!!!!
-      router.replace("/(tabs)");
-    } else {
+  const handleAccess = async () => {
+    try {
+      const response = await fetch(
+        `http://10.48.109.35:8080/conteo/consultaUsuario/${employeeNumber}`
+      );
+      const data = await response.json();
+  
+      if (data) {
+        console.log(data);
+        setEmployeeName(data);
+        router.replace("/(tabs)");
+      } else {
+        alert("Por favor, ingresa un número de empleado válido.");
+      }
+    } catch (error) {
+      //console.error("Error fetching name:", error);
       alert("Por favor, ingresa un número de empleado válido.");
     }
   };
+  
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -39,6 +53,7 @@ export default function Access({ label }: AccessProps) {
           value={employeeNumber}
           placeholderTextColor="gray"
           onChangeText={setEmployeeNumber}
+          keyboardType="numeric"
         />
         <TouchableWithoutFeedback onPress={handleAccess}>
           <View
@@ -105,7 +120,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
-    fontSize: width * 0.05,
+    fontSize: 16,
     fontFamily: "CenturyGothic",
   },
 });
