@@ -11,6 +11,7 @@ import {
 import DropDownPicker from "react-native-dropdown-picker";
 import { useRouter } from "expo-router";
 import { useUser } from "@/context/UserContext";
+import Constants from "expo-constants";
 
 const { width, height } = Dimensions.get("window");
 
@@ -18,6 +19,8 @@ type Item = {
   id: number;
   name: string;
 };
+
+const SERVER = Constants.expoConfig?.extra?.SERVER ?? "";
 
 export default function Index() {
   const router = useRouter();
@@ -36,7 +39,7 @@ export default function Index() {
 
   const fetchPositions = async (letter: string) => {
     try {
-      const response = await fetch(`http://10.48.109.35:8080/conteo/posicionesNoContadas/${letter}`);
+      const response = await fetch(`http://${SERVER}/conteo/posicionesNoContadas/${letter}`);
       const data = await response.json();
 
       const filteredPositions = data.positions

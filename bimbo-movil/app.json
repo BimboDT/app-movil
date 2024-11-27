@@ -27,7 +27,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "extra": {
-      "SERVER": "10.48.109.35:8080"
+      "SERVER": "167.234.218.25:8080"
     },
     "plugins": [
       "expo-router",

@@ -10,8 +10,11 @@ import {
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useUser } from "../context/UserContext";
+import Constants from "expo-constants";
 
 const { width, height } = Dimensions.get("window");
+
+const SERVER = Constants.expoConfig?.extra?.SERVER ?? "";
 
 interface AccessProps {
   label: string;
@@ -26,7 +29,7 @@ export default function Access({ label }: AccessProps) {
   const handleAccess = async () => {
     try {
       const response = await fetch(
-        `http://10.48.109.35:8080/conteo/consultaUsuario/${employeeNumber}`
+        `http://${SERVER}/conteo/consultaUsuario/${employeeNumber}`
       );
       const data = await response.json();
   
