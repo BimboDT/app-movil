@@ -98,14 +98,6 @@ export default function CamaraScreen() {
     }
   }
 
-  const handleBack = () => {
-    const isRegistered = true;
-    if (isRegistered) {
-      router.push("/");
-    } else {
-      router.push("/registro"); 
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -115,13 +107,7 @@ export default function CamaraScreen() {
         enableTorch={cameraTorch}
       >
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={handleBack} 
-          >
-            <Entypo name="chevron-thin-left" size={40} color="white" />
-            <Text style={styles.text}>Back</Text>
-          </TouchableOpacity>
+          
           <TouchableOpacity
             style={styles.button}
             onPress={() => setCameraTorch(!cameraTorch)}
