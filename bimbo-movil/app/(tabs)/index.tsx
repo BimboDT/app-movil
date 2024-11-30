@@ -1,3 +1,5 @@
+// Ventana de inicio de la aplicación, donde se selecciona la letra de la posición a contar
+// y se muestra la lista de posiciones disponibles para contar.
 import React, { useState, useEffect } from "react";
 import {
   Text,
@@ -11,25 +13,32 @@ import {
 import DropDownPicker from "react-native-dropdown-picker";
 import { useRouter } from "expo-router";
 import { useUser } from "@/context/UserContext";
+import { useSelectedID } from "@/context/SelectedIDContext"; // Usar el contexto de SelectedID
 import Constants from "expo-constants";
 
 const { width, height } = Dimensions.get("window");
 
-type Item = {
-  id: number;
-  name: string;
+// Definir el tipo de dato para las posiciones
+type Position = {
+  IdPos: string;
+  Contado: boolean;
 };
 
 const SERVER = Constants.expoConfig?.extra?.SERVER ?? "";
 
 export default function Index() {
   const router = useRouter();
+  // Contexto del usuario que está realizando el conteo
   const { employeeName } = useUser();
-
-  const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
+  // Contexto del ID seleccionado por el usuario para tomar la foto
+  const { selectedID, setSelectedID } = useSelectedID();
+  // Letra seleccionada por el usuario para el conteo
   const [selectedLetter, setSelectedLetter] = useState("A");
-  const [positions, setPositions] = useState<Item[]>([]);
-  const [open, setOpen] = useState(false); 
+  // Lista de posiciones disponibles para contar
+  const [positions, setPositions] = useState<Position[]>([]);
+  // Estado para mostrar el dropdown
+  const [open, setOpen] = useState(false);
+  // Lista de letras para el dropdown
   const [items, setItems] = useState(
     Array.from("ABCDEFGHIJKLMNO").map((letter) => ({
       label: letter,
@@ -37,47 +46,51 @@ export default function Index() {
     }))
   );
 
+  // Función para obtener las posiciones disponibles para contar
   const fetchPositions = async (letter: string) => {
     try {
-      const response = await fetch(`http://${SERVER}/conteo/posicionesNoContadas/${letter}`);
+      const response = await fetch(
+        `http://${SERVER}/conteo/posicionesNoContadas/${letter}`
+      );
       const data = await response.json();
 
-      const filteredPositions = data.positions
-        .filter((pos: string) => pos.startsWith(letter))
-        .map((pos: string, index: number) => ({
-          id: index + 1,
-          name: pos, 
-        }));
+      const filteredPositions = data.uncountedPositions.filter(
+        (pos: Position) => pos.IdPos.startsWith(letter)
+      );
 
       setPositions(filteredPositions);
-      setCheckedItems(new Array(filteredPositions.length).fill(false));
     } catch (error) {
       console.error("Error fetching positions:", error);
     }
   };
 
+  // Cargar las posiciones disponibles para contar
   useEffect(() => {
     fetchPositions(selectedLetter);
-  }, []);
+  }, [selectedLetter]);
 
-  const handleCameraAccess = (index: number) => {
-    setCheckedItems((prev) => {
-      const updatedItems = [...prev];
-      updatedItems[index] = true;
-      return updatedItems;
-    });
+  // Mostrar el ID seleccionado
+  useEffect(() => {
+    console.log("selectedID actualizado:", selectedID);
+  }, [selectedID]);
 
-    router.push("../camara2");
+  // Función para manejar el acceso a la cámara
+  const handleCameraAccess = (item: Position) => {
+    if (!item.Contado) {
+      setSelectedID(item.IdPos);
+      router.push("../camara2");
+    }
   };
 
-  const renderItem = ({ item, index }: { item: Item; index: number }) => (
+  // Renderizar cada posición en la lista
+  const renderItem = ({ item }: { item: Position }) => (
     <TouchableOpacity
       style={styles.listItem}
-      onPress={() => handleCameraAccess(index)}
-      disabled={checkedItems[index]}
+      onPress={() => handleCameraAccess(item)}
+      disabled={item.Contado}
     >
-      <Text style={[styles.itemText, checkedItems[index] && styles.checked]}>
-        {item.name}
+      <Text style={[styles.itemText, item.Contado && styles.checked]}>
+        {item.IdPos}
       </Text>
     </TouchableOpacity>
   );
@@ -110,7 +123,7 @@ export default function Index() {
       <FlatList
         data={positions}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.IdPos}
         contentContainerStyle={styles.listContainer}
       />
 

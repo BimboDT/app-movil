@@ -1,3 +1,5 @@
+// Ventana de inicio de la página. Aquí se muestra el logo de la empresa y el acceso de usuario.
+// Se importa el componente Access para el acceso de usuario.
 import React from "react";
 import {
   View,
