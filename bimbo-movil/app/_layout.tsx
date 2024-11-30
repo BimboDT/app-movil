@@ -1,9 +1,11 @@
+// Controlador general de la aplicación
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { Text, View } from "react-native";
 import { UserProvider } from "../context/UserContext";
+import { SelectedIDProvider } from "@/context/SelectedIDContext";
 
 export default function RootLayout(): JSX.Element {
   const router = useRouter();
@@ -39,11 +41,13 @@ export default function RootLayout(): JSX.Element {
   }
 
   return (
-    <UserProvider>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </UserProvider>
+    <SelectedIDProvider>
+      <UserProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+      </UserProvider>
+    </SelectedIDProvider>
   );
 }

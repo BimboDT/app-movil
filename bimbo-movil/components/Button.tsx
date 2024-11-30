@@ -1,7 +1,9 @@
+// Componente de botón para la aplicación.
 import { StyleSheet, View, Pressable, Text, Dimensions } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
+// Propiedades del botón
 type Props = {
   label: string;
 };

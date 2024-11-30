@@ -1,3 +1,10 @@
+// Código para la implementación de un layout de pestañas en la aplicación móvil de Bimbo.
+// Este layout se compone de tres pestañas: "Home", "Picking" y "Conteo". La pestaña "Home"
+// muestra la pantalla principal de la aplicación, la pestaña "Picking" muestra la pantalla de
+// captura de imágenes para el área de picking y la pestaña "Conteo" muestra la pantalla de
+// conteo de pallets. La pestaña "Conteo" solo se muestra si el usuario ha iniciado sesión en la
+// aplicación.
+
 import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";

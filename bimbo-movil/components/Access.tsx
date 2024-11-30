@@ -1,3 +1,5 @@
+// Componente de acceso para el usuario.
+// Aquí se determina que el número de empleado existe.
 import {
   TextInput,
   Text,
@@ -11,28 +13,31 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useUser } from "../context/UserContext";
 import Constants from "expo-constants";
-
 const { width, height } = Dimensions.get("window");
-
 const SERVER = Constants.expoConfig?.extra?.SERVER ?? "";
 
+// Propiedades del componente
 interface AccessProps {
   label: string;
 }
 
 export default function Access({ label }: AccessProps) {
   const router = useRouter();
+  // Definición del nombre del empleado en el contexto
   const { setEmployeeName } = useUser();
+  // Estado para el número de empleado
   const [employeeNumber, setEmployeeNumber] = useState("");
+  // Estado para el hover del botón
   const [isHovered, setIsHovered] = useState(false);
 
+  // Función para manejar el acceso
   const handleAccess = async () => {
     try {
       const response = await fetch(
         `http://${SERVER}/conteo/consultaUsuario/${employeeNumber}`
       );
       const data = await response.json();
-  
+
       if (data) {
         console.log(data);
         setEmployeeName(data);
@@ -45,7 +50,6 @@ export default function Access({ label }: AccessProps) {
       alert("Por favor, ingresa un número de empleado válido.");
     }
   };
-  
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

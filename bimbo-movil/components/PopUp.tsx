@@ -1,3 +1,4 @@
+// Popup que muestra el conteo obtenido de las cajas.
 import React from "react";
 import {
   View,
@@ -6,12 +7,18 @@ import {
   StyleSheet,
   Text,
   Dimensions,
+  Alert,
 } from "react-native";
 import Modal from "react-native-modal";
 import { useRouter } from "expo-router";
+import { useSelectedID } from "@/context/SelectedIDContext";
+import Constants from "expo-constants";
 
 const { width, height } = Dimensions.get("window");
 
+const SERVER = Constants.expoConfig?.extra?.SERVER ?? "";
+
+// Propiedades del componente
 interface PopupProps {
   isVisible: boolean;
   onClose: () => void;
@@ -19,21 +26,60 @@ interface PopupProps {
   boxCount: number;
 }
 
+// Componente de Popup
 const Popup: React.FC<PopupProps> = ({
   isVisible,
   onClose,
   imageUrl,
   boxCount,
 }) => {
+  // Obtener el ID seleccionado
+  const { selectedID } = useSelectedID();
+
   const router = useRouter();
-  
+
+  // Función para marcar la posición como contada
+  async function markAsCounted(selectedID: string) {
+    try {
+      const response = await fetch(`http://${SERVER}/conteo/actualizarPos`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          idPos: selectedID,
+          contado: true,
+        }),
+      });
+
+      if (response.ok) {
+        Alert.alert("Éxito", "El conteo fue registrado exitosamente.");
+        onClose();
+        router.push("/");
+      } else {
+        const error = await response.text();
+        Alert.alert("Error", `No se pudo registrar el conteo: ${error}`);
+      }
+    } catch (error) {
+      console.error("Error al marcar como contado:", error);
+      Alert.alert(
+        "Error",
+        "Ocurrió un problema al registrar el conteo. Inténtalo de nuevo."
+      );
+    }
+  }
+
+  // Función para cerrar el Popup
   const handleClose = () => {
     onClose();
-    router.push('/');
+    markAsCounted(selectedID);
+    router.push("/");
   };
 
+  // Función para registrar el conteo manualmente
   const handleManualCount = () => {
-    router.push('../app/(tabs)/conteo');
+    onClose();
+    router.push(`/conteo`);
   };
 
   return (

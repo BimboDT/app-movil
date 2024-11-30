@@ -1,3 +1,4 @@
+// Pantalla de la cámara para el área de picking.
 import {
   CameraView,
   useCameraPermissions,
@@ -19,21 +20,31 @@ import { Entypo } from "@expo/vector-icons";
 import Popup from "@/components/PopUp";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
-
-const { width, height } = Dimensions.get('window');
+import { useSelectedID } from "@/context/SelectedIDContext";
+const { width, height } = Dimensions.get("window");
 
 const SERVER = Constants.expoConfig?.extra?.SERVER ?? "";
 
 export default function CamaraScreen() {
-  const router = useRouter(); 
+  const router = useRouter();
+  // Hook para obtener los permisos de la cámara
   const [permission, requestPermission] = useCameraPermissions();
+  // Referencia a la cámara
   const cameraRef = useRef<CameraView | null>(null);
+  // Para guardar la foto tomada
   const [photo, setPhoto] = useState<CameraCapturedPicture | null>(null);
-  const [BoxCount, setBoxCount] = useState(0);
+  // Para guardar el conteo de cajas
+  const [boxCount, setBoxCount] = useState(0);
+  // Para mostrar el popup
   const [isVisible, setIsVisible] = useState(false);
+  // Para cargar el loading
   const [loading, setLoading] = useState(false);
+  // Para el flash de la cámara
   const [cameraTorch, setCameraTorch] = useState<boolean>(false);
+  // Para el URL de la imagen
+  const { setImageUrl, setUrlContado } = useSelectedID();
 
+  // Función para mostrar u ocultar el popup
   const togglePopup = () => {
     setIsVisible(!isVisible);
   };
@@ -42,6 +53,7 @@ export default function CamaraScreen() {
     return <View />;
   }
 
+  // Si no tiene los permisos otorgados, se muestra un mensaje
   if (!permission.granted) {
     return (
       <View style={styles.container}>
@@ -55,6 +67,7 @@ export default function CamaraScreen() {
     );
   }
 
+  // Función para tomar la foto
   async function takePicture() {
     if (cameraRef.current) {
       const photoOptions: CameraPictureOptions = {
@@ -74,23 +87,35 @@ export default function CamaraScreen() {
     }
   }
 
+  // Función para regresar a la ventana inicial
+  const handleBack = () => {
+    const isRegistered = true;
+    if (isRegistered) {
+      router.push("/");
+    } else {
+      router.push("/registro");
+    }
+  };
+
+  // Función para subir la imagen al bucket
   async function uploadPicture(photo: CameraCapturedPicture | null) {
     if (!photo) return "No hay una foto para subir";
 
     try {
-      const response = await fetch(`http://${SERVER}/predict`, {
+      const response = await fetch(`http://10.48.103.123:8082/uploadImage`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          image: photo.base64,
+          imageBase64: photo.base64,
         }),
       });
 
       const responseData = await response.json();
-      setBoxCount(responseData.detections);
-      togglePopup();
+      setImageUrl(responseData.url);
+      console.log(responseData.url);
+      getBoxCount(responseData.url);
     } catch (err) {
       Alert.alert("Upload Failed", `Error: ${err}`);
     } finally {
@@ -98,14 +123,28 @@ export default function CamaraScreen() {
     }
   }
 
-  const handleBack = () => {
-    const isRegistered = true;
-    if (isRegistered) {
-      router.push("/");
-    } else {
-      router.push("/registro"); 
+  // Función para obtener el conteo de cajas
+  async function getBoxCount(imageUrl: string) {
+    try {
+      const response = await fetch(`http://10.48.103.123:8082/predict`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          imageUrl: imageUrl,
+        }),
+      });
+
+      const responseData = await response.json();
+      setBoxCount(responseData.detecciones_caja);
+      setUrlContado(responseData.url);
+      console.log(responseData.url);
+      togglePopup();
+    } catch (err) {
+      Alert.alert("Prediction Failed", `Error: ${err}`);
     }
-  };
+  }
 
   return (
     <View style={styles.container}>
@@ -115,10 +154,7 @@ export default function CamaraScreen() {
         enableTorch={cameraTorch}
       >
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={handleBack} 
-          >
+          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
             <Entypo name="chevron-thin-left" size={40} color="white" />
             <Text style={styles.text}>Back</Text>
           </TouchableOpacity>
@@ -147,7 +183,7 @@ export default function CamaraScreen() {
         isVisible={isVisible}
         onClose={togglePopup}
         imageUrl={photo ? photo.uri : ""}
-        boxCount={BoxCount}
+        boxCount={boxCount}
       />
     </View>
   );
@@ -162,7 +198,7 @@ const styles = StyleSheet.create({
   },
   message: {
     textAlign: "center",
-    paddingBottom: height * 0.03, 
+    paddingBottom: height * 0.03,
     fontWeight: "bold",
     fontFamily: "CenturyGothic",
     fontSize: width * 0.05,
@@ -174,7 +210,7 @@ const styles = StyleSheet.create({
   backButton: {
     position: "absolute",
     top: height * 0.02,
-    left: width * 0.02, 
+    left: width * 0.02,
     flexDirection: "row",
     alignItems: "center",
     fontFamily: "CenturyGothic",
@@ -189,7 +225,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignSelf: "flex-end",
     alignItems: "center",
-    margin: height * 0.05, 
+    margin: height * 0.05,
   },
   text: {
     fontSize: width * 0.04,
